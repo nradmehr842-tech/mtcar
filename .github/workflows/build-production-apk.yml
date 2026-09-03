@@ -1,4 +1,4 @@
-name: Build MTcar Android APK
+name: Build MTcar v24 Main APK
 
 on:
   workflow_dispatch:
@@ -8,16 +8,16 @@ on:
       - master
 
 jobs:
-  build-android:
+  android-release:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
-      - name: Checkout project
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
 
       - name: Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -29,49 +29,48 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Flutter doctor
-        run: flutter doctor -v
-
-      - name: Generate Android project
+      - name: Generate Android host project
         shell: bash
         run: |
-          rm -rf /tmp/mtcar_gen
+          rm -rf /tmp/mtcar_android
           flutter create \
             --platforms=android \
             --org ir.mediatelecom \
             --project-name mtcar \
-            /tmp/mtcar_gen
+            /tmp/mtcar_android
 
           rm -rf mobile/android
-          cp -R /tmp/mtcar_gen/android mobile/android
+          cp -R /tmp/mtcar_android/android mobile/android
 
-      - name: Apply MTcar Android native overlay
+      - name: Apply MTcar production native overlay
         shell: bash
         run: |
-          chmod +x scripts/apply_android_overlay.sh
-          bash scripts/apply_android_overlay.sh
+          chmod +x scripts/apply_android_production_overlay.sh
+          scripts/apply_android_production_overlay.sh
 
-      - name: Install Flutter dependencies
+      - name: Install packages
         working-directory: mobile
         run: flutter pub get
 
-      - name: Analyze
+      - name: Analyze production app
         working-directory: mobile
         run: flutter analyze --no-fatal-infos
 
-      - name: Build debug APK
+      - name: Build release APK
         working-directory: mobile
-        run: flutter build apk --debug
+        run: >
+          flutter build apk --release
+          --dart-define=API_BASE_URL=https://api.mediatelecom.ir
 
-      - name: Rename APK
+      - name: Prepare artifact
         shell: bash
         run: |
-          cp mobile/build/app/outputs/flutter-apk/app-debug.apk MTcar-debug.apk
+          cp mobile/build/app/outputs/flutter-apk/app-release.apk MTcar-v24-release.apk
 
-      - name: Upload APK
+      - name: Upload MTcar APK
         uses: actions/upload-artifact@v4
         with:
-          name: MTcar-Android-APK
-          path: MTcar-debug.apk
+          name: MTcar-v24-Main-APK
+          path: MTcar-v24-release.apk
           if-no-files-found: error
           retention-days: 30

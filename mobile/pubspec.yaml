@@ -1,7 +1,7 @@
 name: mtcar
-description: MTcar vehicle security and tracking client
+description: MTcar production mobile client
 publish_to: none
-version: 0.1.0+1
+version: 6.2.0+24
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -9,6 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.2
+  shared_preferences: ^2.3.3
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/mtcar_logo_dark.png
+    - assets/images/mtcar_logo_white.png
+    - assets/images/mtcar_vehicle.png
+    - assets/images/mtcar_vehicle_red.png
+    - assets/images/mtcar_launcher_1024.png

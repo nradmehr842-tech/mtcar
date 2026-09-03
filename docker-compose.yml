@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mtcar
+      POSTGRES_USER: mtcar
+      POSTGRES_PASSWORD: CHANGE_ME_STRONG_PASSWORD
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mtcar_net
+
+  traccar:
+    image: traccar/traccar:latest
+    restart: unless-stopped
+    ports:
+      - "5001-5200:5001-5200/tcp"
+      - "5001-5200:5001-5200/udp"
+    volumes:
+      - traccar_logs:/opt/traccar/logs
+      - traccar_data:/opt/traccar/data
+    networks:
+      - mtcar_net
+
+  api:
+    build: ./server
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    depends_on:
+      - postgres
+      - traccar
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - mtcar_net
+
+volumes:
+  postgres_data:
+  traccar_logs:
+  traccar_data:
+
+networks:
+  mtcar_net:
+    driver: bridge

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MTcar Admin</title>
+<style>
+:root{--red:#E10600;--red2:#B80000;--bg:#0E1116;--card:#171B22;--card2:#20252E;--line:#2E3540;--txt:#F5F7FA;--mut:#9CA3AF;--ok:#22A05A;--warn:#D97706}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif}
+button,input,select,textarea{font:inherit}.wrap{max-width:1280px;margin:auto;padding:18px}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;border-radius:22px;background:linear-gradient(135deg,var(--red),var(--red2));margin-bottom:16px}.brand{font-size:24px;font-weight:900}.mut{color:var(--mut);font-size:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;font-size:11px;color:var(--mut);margin-bottom:5px}input,select,textarea{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--red)}button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer}.primary{background:var(--red);color:#fff;font-weight:800}.secondary{background:var(--card2);color:var(--txt);border:1px solid var(--line)}.danger{background:#64130f;color:#fff}.ok{color:var(--ok)}.warn{color:var(--warn)}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.caps{display:flex;gap:12px;flex-wrap:wrap}.caps label{display:flex;align-items:center;gap:5px;color:var(--txt);font-size:12px}.caps input{width:auto}.table{overflow:auto;margin-top:14px}.row{display:grid;grid-template-columns:1.4fr .9fr .7fr .7fr .7fr 1.2fr;gap:8px;align-items:center;padding:11px;border-bottom:1px solid var(--line);min-width:850px}.row.head{color:var(--mut);font-size:11px}.badge{display:inline-block;padding:4px 8px;border-radius:20px;background:#22a05a1c;color:var(--ok);font-size:10px}.badge.off{background:#d977061b;color:var(--warn)}.login{max-width:430px;margin:80px auto}.hide{display:none!important}.error{color:#ff7b74;font-size:12px;margin-top:8px}.status{font-size:12px;color:var(--mut)}@media(max-width:850px){.grid,.two{grid-template-columns:1fr}.header{align-items:flex-start;flex-direction:column}.wrap{padding:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="loginView" class="login card">
+    <div class="brand" style="color:#fff;margin-bottom:4px">MTcar Admin</div>
+    <div class="mut" style="margin-bottom:16px">ورود مدیر سیستم</div>
+    <label>شماره موبایل Admin</label>
+    <input id="loginPhone" inputmode="tel">
+    <div style="height:9px"></div>
+    <label>رمز عبور</label>
+    <input id="loginPassword" type="password">
+    <div style="height:13px"></div>
+    <button id="loginBtn" class="primary" style="width:100%">ورود</button>
+    <div id="loginError" class="error"></div>
+  </div>
+
+  <div id="adminView" class="hide">
+    <div class="header">
+      <div><div class="brand">MTcar</div><div style="font-size:12px;opacity:.8">پنل مدیریت مدل‌های ردیاب</div></div>
+      <div class="toolbar"><span id="adminIdentity" style="font-size:12px"></span><button id="logoutBtn" class="secondary">خروج</button></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px">
+        <div><b id="formTitle">افزودن مدل جدید</b><div class="mut">مدل Active پس از ذخیره در Sync بعدی اپ کاربران دیده می‌شود.</div></div>
+        <button id="resetBtn" class="secondary">مدل جدید</button>
+      </div>
+
+      <div class="grid">
+        <div><label>برند</label><input id="brand" placeholder="MTcar / Coban ..."></div>
+        <div><label>کد مدل</label><input id="model" placeholder="MT120"></div>
+        <div><label>نام نمایشی</label><input id="displayName" placeholder="MT120"></div>
+        <div><label>تصویر کوچک / URL</label><input id="thumbnailAsset" placeholder="https://... یا asset key"></div>
+        <div><label>Protocol</label><input id="protocol" placeholder="gps103 / h02 / gt06"></div>
+        <div><label>Port</label><input id="serverPort" type="number" min="1" max="65535"></div>
+        <div><label>Transport</label><select id="transport"><option value="tcp">TCP</option><option value="udp">UDP</option></select></div>
+        <div><label>وضعیت</label><select id="isActive"><option value="true">فعال</option><option value="false">غیرفعال</option></select></div>
+      </div>
+
+      <div style="margin-top:14px"><label>قابلیت‌های دستگاه</label>
+        <div class="caps" id="capabilities">
+          <label><input type="checkbox" data-cap="liveTracking" checked> رهگیری زنده</label>
+          <label><input type="checkbox" data-cap="routeHistory" checked> بازپخش مسیر</label>
+          <label><input type="checkbox" data-cap="acc"> ACC</label>
+          <label><input type="checkbox" data-cap="door"> Door</label>
+          <label><input type="checkbox" data-cap="shock"> Shock</label>
+          <label><input type="checkbox" data-cap="externalPower"> قطع برق</label>
+          <label><input type="checkbox" data-cap="backupBattery"> باتری داخلی</label>
+          <label><input type="checkbox" data-cap="sos"> SOS</label>
+          <label><input type="checkbox" data-cap="voiceMonitor"> شنود</label>
+          <label><input type="checkbox" data-cap="engineControl"> قطع موتور</label>
+          <label><input type="checkbox" data-cap="siren"> آژیر</label>
+          <label><input type="checkbox" data-cap="fuelSensor"> سنسور سوخت</label>
+          <label><input type="checkbox" data-cap="obd"> OBD</label>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:14px">
+        <div><label>Command Profile — JSON</label><textarea id="commandProfile" rows="9">{}</textarea></div>
+        <div><label>Setup Profile — JSON</label><textarea id="setupProfile" rows="9">{"deviceClass":"vehicle","requiresImei":true,"requiresTrackerSim":true,"requiresApn":true}</textarea></div>
+      </div>
+      <div style="margin-top:10px"><label>یادداشت مدیر</label><textarea id="notes" rows="2"></textarea></div>
+
+      <div class="toolbar" style="margin-top:14px">
+        <button id="saveBtn" class="primary">ذخیره مدل</button>
+        <span id="saveStatus" class="status"></span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="toolbar" style="justify-content:space-between"><b>مدل‌های ثبت‌شده</b><button id="refreshBtn" class="secondary">بروزرسانی</button></div>
+      <div class="table">
+        <div class="row head"><span>مدل</span><span>Protocol</span><span>Port</span><span>Transport</span><span>وضعیت</span><span>عملیات</span></div>
+        <div id="rows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://api.mediatelecom.ir';
+let token=sessionStorage.getItem('mtcar_admin_token')||'';
+let editingId=null;
+const $=id=>document.getElementById(id);
+
+function headers(){return {'Content-Type':'application/json','Authorization':'Bearer '+token}}
+function capData(){const o={};document.querySelectorAll('#capabilities input').forEach(x=>o[x.dataset.cap]=x.checked);return o}
+function setCaps(obj={}){document.querySelectorAll('#capabilities input').forEach(x=>x.checked===!!obj[x.dataset.cap]||(x.checked=!!obj[x.dataset.cap]))}
+function parseJson(id){try{return JSON.parse($(id).value||'{}')}catch(e){throw new Error(id==='commandProfile'?'Command Profile JSON نامعتبر است':'Setup Profile JSON نامعتبر است')}}
+function resetForm(){
+ editingId=null;$('formTitle').textContent='افزودن مدل جدید';
+ $('brand').value='';$('model').value='';$('displayName').value='';$('thumbnailAsset').value='';
+ $('protocol').value='';$('serverPort').value='';$('transport').value='tcp';$('isActive').value='true';
+ $('commandProfile').value='{}';$('setupProfile').value='{"deviceClass":"vehicle","requiresImei":true,"requiresTrackerSim":true,"requiresApn":true}';$('notes').value='';
+ setCaps({liveTracking:true,routeHistory:true});$('saveStatus').textContent='';
+}
+async function request(path,opts={}){
+ const r=await fetch(API+path,{...opts,headers:{...headers(),...(opts.headers||{})}});
+ let body={};try{body=await r.json()}catch{}
+ if(!r.ok)throw new Error(body.error||body.message||('HTTP '+r.status));
+ return body;
+}
+async function login(){
+ $('loginError').textContent='';
+ try{
+  const body=await fetch(API+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:$('loginPhone').value.trim(),password:$('loginPassword').value})}).then(async r=>{const b=await r.json();if(!r.ok)throw new Error(b.error||'login_failed');return b});
+  if(body.user?.role!=='admin')throw new Error('این حساب دسترسی مدیر ندارد.');
+  token=body.token;sessionStorage.setItem('mtcar_admin_token',token);
+  $('adminIdentity').textContent=body.user.phone||'Admin';showAdmin();await loadModels();
+ }catch(e){$('loginError').textContent=e.message}
+}
+function showAdmin(){$('loginView').classList.add('hide');$('adminView').classList.remove('hide')}
+function showLogin(){$('adminView').classList.add('hide');$('loginView').classList.remove('hide')}
+async function loadModels(){
+ try{
+  const data=await request('/api/admin/device-models');
+  const rows=$('rows');rows.innerHTML='';
+  data.forEach(m=>{
+   const div=document.createElement('div');div.className='row';
+   div.innerHTML=`<span><b>${esc(m.brand)} ${esc(m.display_name)}</b><div class="mut">${esc(m.model)}</div></span>
+   <span>${esc(m.protocol||'—')}</span><span>${m.server_port??'—'}</span><span>${esc((m.transport||'tcp').toUpperCase())}</span>
+   <span><span class="badge ${m.is_active?'':'off'}">${m.is_active?'فعال':'غیرفعال'}</span></span>
+   <span class="toolbar"><button class="secondary edit">ویرایش</button><button class="secondary toggle">${m.is_active?'غیرفعال':'فعال'}</button><button class="danger del">حذف</button></span>`;
+   div.querySelector('.edit').onclick=()=>editModel(m);
+   div.querySelector('.toggle').onclick=()=>toggleModel(m);
+   div.querySelector('.del').onclick=()=>deleteModel(m);
+   rows.appendChild(div);
+  });
+ }catch(e){if(String(e.message).includes('invalid_token')||String(e.message).includes('admin_required'))logout();else $('saveStatus').textContent='خطا در دریافت مدل‌ها: '+e.message}
+}
+function editModel(m){
+ editingId=m.id;$('formTitle').textContent='ویرایش '+m.brand+' '+m.display_name;
+ $('brand').value=m.brand||'';$('model').value=m.model||'';$('displayName').value=m.display_name||'';
+ $('thumbnailAsset').value=m.thumbnail_asset||'';$('protocol').value=m.protocol||'';$('serverPort').value=m.server_port||'';
+ $('transport').value=m.transport||'tcp';$('isActive').value=String(!!m.is_active);
+ $('commandProfile').value=JSON.stringify(m.command_profile||{},null,2);$('setupProfile').value=JSON.stringify(m.setup_profile||{},null,2);
+ $('notes').value=m.notes||'';setCaps(m.capabilities||{});window.scrollTo({top:0,behavior:'smooth'});
+}
+async function saveModel(){
+ try{
+  const body={brand:$('brand').value.trim(),model:$('model').value.trim(),displayName:$('displayName').value.trim(),
+   thumbnailAsset:$('thumbnailAsset').value.trim()||null,protocol:$('protocol').value.trim(),serverPort:Number($('serverPort').value),
+   transport:$('transport').value,capabilities:capData(),commandProfile:parseJson('commandProfile'),setupProfile:parseJson('setupProfile'),
+   isActive:$('isActive').value==='true',isVerified:true,notes:$('notes').value.trim()||null};
+  if(!body.brand||!body.model||!body.displayName||!body.protocol)throw new Error('برند، مدل، نام نمایشی و Protocol الزامی هستند.');
+  if(!Number.isInteger(body.serverPort)||body.serverPort<1||body.serverPort>65535)throw new Error('Port نامعتبر است.');
+  $('saveStatus').textContent='در حال ذخیره...';
+  if(editingId)await request('/api/admin/device-models/'+editingId,{method:'PATCH',body:JSON.stringify(body)});
+  else await request('/api/admin/device-models',{method:'POST',body:JSON.stringify(body)});
+  $('saveStatus').textContent='ذخیره شد؛ در Sync بعدی اپ کاربران قابل مشاهده است.';resetForm();await loadModels();
+ }catch(e){$('saveStatus').textContent=e.message}
+}
+async function toggleModel(m){try{await request('/api/admin/device-models/'+m.id+'/status',{method:'PATCH',body:JSON.stringify({isActive:!m.is_active})});await loadModels()}catch(e){alert(e.message)}}
+async function deleteModel(m){if(!confirm('مدل '+m.display_name+' حذف شود؟ اگر Device از آن استفاده کند سرور اجازه حذف نمی‌دهد.'))return;try{await request('/api/admin/device-models/'+m.id,{method:'DELETE'});await loadModels()}catch(e){alert(e.message)}}
+function logout(){token='';sessionStorage.removeItem('mtcar_admin_token');showLogin()}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+$('loginBtn').onclick=login;$('logoutBtn').onclick=logout;$('saveBtn').onclick=saveModel;$('resetBtn').onclick=resetForm;$('refreshBtn').onclick=loadModels;
+if(token){showAdmin();loadModels()}else showLogin();
+</script>
+</body>
+</html>

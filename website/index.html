@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="MTcar؛ سامانه هوشمند رهگیری، امنیت و مدیریت خودرو، موتورسیکلت و ناوگان سازمانی">
+<title>MTcar | رهگیری و امنیت هوشمند خودرو</title>
+<style>
+:root{
+  --bg:#07101d;--panel:#0d1828;--panel2:#101e31;--line:#233a58;
+  --text:#f4f7fb;--mut:#9cadc2;--green:#40e08a;--blue:#66a1ff;--danger:#ff6670;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.8}
+a{color:inherit;text-decoration:none}.wrap{max-width:1180px;margin:auto;padding:0 22px}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:#07101dde;border-bottom:1px solid #16283e}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900}.logo{width:38px;height:38px;border-radius:13px;background:linear-gradient(145deg,var(--green),var(--blue));display:grid;place-items:center;color:#06121c}
+.links{display:flex;gap:22px;color:#cad4e2;font-size:14px}.actions{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;border-radius:12px;border:1px solid var(--line);background:#13233a;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,#1d7a50,#2ea96e);border-color:#3fc780}.hero{padding:82px 0 54px;display:grid;grid-template-columns:1.15fr .85fr;gap:54px;align-items:center}
+.kicker{color:var(--green);font-weight:700}.hero h1{font-size:48px;line-height:1.35;margin:12px 0 18px}.hero p{font-size:18px;color:var(--mut);max-width:720px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.device{background:radial-gradient(circle at 50% 30%,#213d61,#0b1525 58%);border:1px solid var(--line);border-radius:30px;padding:24px;min-height:500px;position:relative;overflow:hidden}
+.phone{width:260px;height:480px;margin:auto;border-radius:36px;border:8px solid #182132;background:#08111e;padding:18px;box-shadow:0 30px 80px #0008}
+.phone .top{font-size:12px;color:var(--mut);display:flex;justify-content:space-between}.map{height:210px;border-radius:18px;margin-top:20px;background:linear-gradient(33deg,transparent 47%,#284265 48%,transparent 50%) 0 0/110px 90px,#0e1a2b;position:relative}
+.car{position:absolute;left:45%;top:45%;width:44px;height:44px;border-radius:50%;background:var(--green);display:grid;place-items:center}.mini{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.tile{border:1px solid var(--line);border-radius:12px;padding:10px;font-size:12px;background:#0d1829}
+.section{padding:72px 0}.section h2{font-size:34px;margin:0 0 12px}.lead{color:var(--mut);max-width:760px;margin-bottom:28px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:22px}
+.icon{font-size:28px}.card h3{margin:10px 0 6px}.card p{color:var(--mut);font-size:14px}
+.org{display:grid;grid-template-columns:1fr 1fr;gap:18px}.dashboard{min-height:330px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:12px;border-radius:12px;background:#0a1524;border:1px solid var(--line);text-align:center}.metric b{display:block;font-size:22px}.fleet{margin-top:12px;display:grid;gap:8px}.row{display:flex;justify-content:space-between;padding:11px;border-radius:10px;background:#0a1524;border:1px solid var(--line);font-size:13px}
+.price{display:grid;grid-template-columns:1fr 1fr;gap:16px}.price-card{padding:28px}.price-num{font-size:38px;font-weight:900;margin:12px 0}.note{font-size:13px;color:var(--mut)}
+.faq{display:grid;gap:10px}.faq details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.faq summary{cursor:pointer;font-weight:700}
+.cta{padding:36px;border-radius:24px;background:linear-gradient(135deg,#103d2d,#102a4b);border:1px solid #2d5c68;display:flex;justify-content:space-between;align-items:center;gap:20px}
+footer{padding:36px 0 48px;border-top:1px solid #16283e;color:var(--mut);font-size:13px}
+@media(max-width:900px){.hero,.org,.price{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.links{display:none}.hero h1{font-size:38px}.device{min-height:auto}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid3{grid-template-columns:1fr}.hero{padding-top:48px}.hero h1{font-size:32px}.actions .btn:first-child{display:none}.cta{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav">
+  <a class="brand" href="#"><span class="logo">⌖</span><span>MTcar</span></a>
+  <div class="links">
+    <a href="#features">امکانات</a><a href="#organizations">سازمانی</a><a href="#pricing">اشتراک</a><a href="#faq">سوالات متداول</a><a href="#contact">تماس</a>
+  </div>
+  <div class="actions">
+    <a class="btn" href="https://admin.mediatelecom.ir">ورود مدیریت</a>
+    <a class="btn primary" href="https://app.mediatelecom.ir">ورود کاربران</a>
+  </div>
+</div></nav>
+
+<header class="wrap hero">
+  <div>
+    <div class="kicker">امنیت، رهگیری و مدیریت ناوگان در یک سامانه</div>
+    <h1>خودرو و ناوگان شما، همیشه زیر نظر <span style="color:var(--green)">MTcar</span></h1>
+    <p>MTcar یک سامانه یکپارچه برای رهگیری زنده خودرو و موتورسیکلت، دریافت هشدارهای امنیتی، مشاهده مسیرها و مدیریت چندین وسیله نقلیه در اپ موبایل و پنل وب است.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="https://app.mediatelecom.ir">ورود به MTcar</a>
+      <a class="btn" href="#features">مشاهده امکانات</a>
+    </div>
+  </div>
+  <div class="device">
+    <div class="phone">
+      <div class="top"><span>100%</span><b>MTcar</b><span>10:30</span></div>
+      <div class="map"><span class="car">🚗</span></div>
+      <div class="mini">
+        <div class="tile">سرعت<br><b>46 km/h</b></div><div class="tile">ACC<br><b style="color:var(--green)">روشن</b></div>
+        <div class="tile">باتری<br><b>87%</b></div><div class="tile">GSM<br><b style="color:var(--green)">خوب</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features" class="section"><div class="wrap">
+  <h2>هر چیزی که برای کنترل و امنیت وسیله نیاز دارید</h2>
+  <p class="lead">امکانات MTcar برای استفاده شخصی و سازمانی طراحی شده و اطلاعات اصلی از سرور مرکزی به‌روز می‌شوند.</p>
+  <div class="grid3">
+    <div class="card"><div class="icon">📍</div><h3>رهگیری زنده</h3><p>موقعیت، سرعت، جهت، وضعیت آنلاین و آخرین ارتباط دستگاه روی نقشه.</p></div>
+    <div class="card"><div class="icon">🛡️</div><h3>هشدارهای امنیتی</h3><p>هشدار حرکت، ضربه، ACC، قطع برق، باز شدن درب، SOS و رویدادهای مهم.</p></div>
+    <div class="card"><div class="icon">🗺️</div><h3>تاریخچه مسیر</h3><p>مسیرهای گذشته، توقف‌ها، مدت توقف و گزارش مسافت طی‌شده.</p></div>
+    <div class="card"><div class="icon">🏍️</div><h3>خودرو و موتورسیکلت</h3><p>پروفایل و آیکن جدا برای انواع وسیله و تنظیمات متناسب با نوع وسیله.</p></div>
+    <div class="card"><div class="icon">🔔</div><h3>هشدار فوری موبایل</h3><p>اعلان‌های مهم با صدا و لرزش و پشتیبان SMS در شرایط قطع اینترنت.</p></div>
+    <div class="card"><div class="icon">💬</div><h3>پشتیبانی داخل برنامه</h3><p>ارسال پیام و تیکت به مدیریت و دریافت پاسخ داخل اپ یا نسخه وب.</p></div>
+  </div>
+</div></section>
+
+<section id="organizations" class="section"><div class="wrap">
+  <div class="org">
+    <div>
+      <div class="kicker">برای شرکت‌ها و ناوگان‌ها</div>
+      <h2>یک پنل، برای مدیریت همه خودروها</h2>
+      <p class="lead">شرکت‌ها می‌توانند ده‌ها یا صدها وسیله را در یک حساب سازمانی مدیریت کنند و به مدیر، اپراتور و ناظر سطح دسترسی متفاوت بدهند.</p>
+      <div class="card"><b>قابلیت‌های سازمانی</b><p>نقشه چندخودرویی، نقش‌های کاربری، گزارش مسیر، مشاهده وضعیت اشتراک، IMEI و سیم‌کارت ردیاب، مدیریت کاربران و ارتباط با پشتیبانی.</p></div>
+    </div>
+    <div class="card dashboard">
+      <div class="metrics"><div class="metric"><b>24</b><span>خودرو</span></div><div class="metric"><b>21</b><span>آنلاین</span></div><div class="metric"><b>6</b><span>کاربر</span></div><div class="metric"><b>248</b><span>روز اعتبار</span></div></div>
+      <div class="fleet">
+        <div class="row"><span>خودرو 01</span><b style="color:var(--green)">آنلاین • 54 km/h</b></div>
+        <div class="row"><span>خودرو 02</span><b style="color:var(--green)">آنلاین • توقف</b></div>
+        <div class="row"><span>موتور پیک 03</span><b style="color:var(--green)">آنلاین • 31 km/h</b></div>
+        <div class="row"><span>ون 04</span><b style="color:var(--danger)">آفلاین • 12 دقیقه</b></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="pricing" class="section"><div class="wrap">
+  <h2>اشتراک ساده و قابل مدیریت</h2>
+  <p class="lead">تعرفه‌ها از سرور MTcar دریافت می‌شوند و مدیر سامانه می‌تواند بدون انتشار نسخه جدید اپ آن‌ها را به‌روزرسانی کند.</p>
+  <div class="price">
+    <div class="card price-card"><h3>شخصی</h3><div class="price-num">اشتراک سالانه</div><p>برای یک یا چند وسیله شخصی با اپ موبایل و نسخه وب.</p><a class="btn primary" href="https://app.mediatelecom.ir">شروع استفاده</a></div>
+    <div class="card price-card"><h3>سازمانی</h3><div class="price-num">ناوگان</div><p>تعرفه متناسب با تعداد خودروها و امکانات مدیریتی سازمان.</p><a class="btn" href="#contact">درخواست همکاری</a></div>
+  </div>
+</div></section>
+
+<section id="faq" class="section"><div class="wrap">
+  <h2>سوالات متداول</h2>
+  <div class="faq">
+    <details><summary>آیا MTcar فقط برای خودرو است؟</summary><p>خیر. برای خودرو، موتورسیکلت و ناوگان سازمانی قابل استفاده است.</p></details>
+    <details><summary>آیا بدون اینترنت هم هشدار دریافت می‌شود؟</summary><p>در صورت پشتیبانی دستگاه و وجود شبکه GSM، SMS Backup می‌تواند برای هشدارهای مهم استفاده شود.</p></details>
+    <details><summary>سازمان‌ها چند خودرو می‌توانند اضافه کنند؟</summary><p>معماری سامانه برای چندخودرویی طراحی شده و سقف عملی براساس پلن و ظرفیت سرور تعیین می‌شود.</p></details>
+    <details><summary>اطلاعات اشتراک و تنظیمات چگونه به‌روز می‌شود؟</summary><p>اپ و پنل وب تنظیمات و وضعیت حساب را از سرور مرکزی دریافت می‌کنند.</p></details>
+  </div>
+</div></section>
+
+<section id="contact" class="section"><div class="wrap">
+  <div class="cta">
+    <div><h2 style="margin:0">برای استفاده شخصی یا مدیریت ناوگان آماده‌اید؟</h2><div class="note">پشتیبانی: support@mediatelecom.ir</div></div>
+    <a class="btn primary" href="https://app.mediatelecom.ir">ورود به سامانه</a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">© MTcar — سامانه رهگیری و مدیریت هوشمند وسیله نقلیه • mediatelecom.ir</div></footer>
+</body>
+</html>

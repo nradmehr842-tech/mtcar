@@ -1,0 +1,27 @@
+# Flutter
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Generated Android host (GitHub workflow regenerates it)
+mobile/android/
+
+# Node
+server/node_modules/
+
+# Secrets
+.env
+*.env
+!*.env.example
+**/key.properties
+**/*.jks
+**/*.keystore
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

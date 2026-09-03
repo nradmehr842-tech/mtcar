@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MTcar - سازمانی</title>
+<style>
+:root{--bg:#F3F4F6;--p:#FFFFFF;--p2:#F8F9FB;--line:#D5D9E0;--txt:#111827;--mut:#6B7280;--ok:#3ddc84;--bad:#E10600;--warn:#ffbd4a;--blue:#E10600}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif}
+button,input,select,textarea{font:inherit}.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}
+.side{padding:18px;background:#0b1322;border-left:1px solid var(--line)}.brand{font-size:20px;font-weight:800}.sub{font-size:12px;color:var(--mut);margin-top:5px}
+.nav{display:grid;gap:8px;margin-top:22px}.nav button{padding:12px;border:1px solid var(--line);background:var(--p2);color:white;border-radius:12px;text-align:right;cursor:pointer}.nav .on{background:#172846;border-color:var(--blue)}
+.main{padding:20px}.page{display:none}.page.on{display:block}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.chip{border:1px solid var(--line);border-radius:999px;padding:8px 11px;color:var(--mut);font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:var(--p);border:1px solid var(--line);border-radius:16px;padding:14px}.metric b{display:block;font-size:24px;margin-top:8px}.metric span{color:var(--mut);font-size:12px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:14px}.map{height:420px;border-radius:16px;position:relative;overflow:hidden;background:linear-gradient(30deg,transparent 49%,#20304a 50%,transparent 51%) 0 0/140px 120px,linear-gradient(-35deg,transparent 49%,#1b2941 50%,transparent 51%) 0 0/170px 150px,#0c1524}
+.pin{position:absolute;width:44px;height:44px;border-radius:14px;background:var(--ok);display:grid;place-items:center}.p1{left:20%;top:35%}.p2{left:54%;top:48%}.p3{left:70%;top:26%}.p4{left:38%;top:70%}
+.list{display:grid;gap:8px}.vehicle{padding:11px;background:var(--p2);border:1px solid var(--line);border-radius:12px}.vehicle b{display:block}.status{font-size:12px;color:var(--ok)}
+.table{overflow:auto}.row{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:8px;padding:11px;border-bottom:1px solid var(--line);align-items:center;min-width:780px}.row.header{background:var(--p2);color:var(--mut);font-size:12px}
+.btn{border:1px solid var(--line);background:#15223a;color:white;padding:10px 12px;border-radius:11px;cursor:pointer}.btn.ok{background:#103222;border-color:#2c714c}.btn.bad{background:#39171d;border-color:#6a3038}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid var(--line);background:var(--p2);color:white;border-radius:11px}.form textarea{min-height:120px;resize:vertical}
+.ticket{padding:12px;background:var(--p2);border:1px solid var(--line);border-radius:12px}.ticket small{color:var(--mut)}
+.chat{display:grid;gap:8px}.msg{max-width:80%;padding:10px 12px;border-radius:12px;background:#172946}.msg.admin{background:#123321;margin-right:auto}.msg small{display:block;color:var(--mut);margin-top:4px}
+@media(max-width:980px){.app{grid-template-columns:1fr}.side{border-left:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand">MTcar</div>
+  <div class="sub">پنل سازمانی • شرکت نمونه</div>
+  <div class="nav">
+    <button class="on" data-p="dashboard">داشبورد</button>
+    <button data-p="vehicles">خودروها</button>
+    <button data-p="members">کاربران</button>
+    <button data-p="routes">مسیرها</button>
+    <button data-p="support">پشتیبانی</button>
+    <button data-p="about">درباره و تماس</button>
+  </div>
+</aside>
+<main class="main">
+<section id="dashboard" class="page on">
+  <div class="head"><div><h2 style="margin:0">شرکت نمونه</h2><div class="sub">Manager • آخرین Sync همین الان</div></div><span class="chip">12 خودرو • اشتراک فعال</span></div>
+  <div class="cards">
+    <div class="card metric"><span>کل خودروها</span><b>12</b></div>
+    <div class="card metric"><span>آنلاین</span><b>10</b></div>
+    <div class="card metric"><span>هشدار امروز</span><b>3</b></div>
+    <div class="card metric"><span>روز باقی‌مانده</span><b>247</b></div>
+  </div>
+  <div class="grid">
+    <div class="map">
+      <div class="pin p1">🚗</div><div class="pin p2">🚗</div><div class="pin p3">🏍️</div><div class="pin p4">🚚</div>
+    </div>
+    <div class="card list">
+      <div class="vehicle"><b>خودرو 01</b><span class="status">آنلاین • 46 km/h</span></div>
+      <div class="vehicle"><b>خودرو 02</b><span class="status">آنلاین • توقف</span></div>
+      <div class="vehicle"><b>موتور پیک 03</b><span class="status">آنلاین • 32 km/h</span></div>
+      <div class="vehicle"><b>ون 04</b><span style="color:var(--warn);font-size:12px">Offline • 8 دقیقه</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="vehicles" class="page">
+  <div class="head"><h2 style="margin:0">مدیریت خودروها</h2><span class="chip">IMEI • SIM • Driver</span></div>
+  <div class="card table">
+    <div class="row header"><span>وسیله</span><span>IMEI</span><span>سیم‌کارت ردیاب</span><span>وضعیت</span><span>عملیات</span></div>
+    <div class="row"><span>خودرو 01</span><span>123456789012345</span><span>0919•••••81</span><span class="status">آنلاین</span><button class="btn">جزئیات</button></div>
+    <div class="row"><span>خودرو 02</span><span>864201234567890</span><span>0936•••••04</span><span class="status">آنلاین</span><button class="btn">جزئیات</button></div>
+    <div class="row"><span>موتور پیک 03</span><span>359710123456789</span><span>0910•••••25</span><span class="status">آنلاین</span><button class="btn">جزئیات</button></div>
+  </div>
+</section>
+
+<section id="members" class="page">
+  <div class="head"><h2 style="margin:0">کاربران سازمان</h2><span class="chip">Owner • Manager • Dispatcher • Viewer</span></div>
+  <div class="grid">
+    <div class="card table">
+      <div class="row header"><span>کاربر</span><span>نقش</span><span>وضعیت</span><span>ورود</span><span>عملیات</span></div>
+      <div class="row"><span>0912•••••42</span><span>Owner</span><span class="status">فعال</span><span>امروز</span><button class="btn">ویرایش</button></div>
+      <div class="row"><span>0935•••••16</span><span>Dispatcher</span><span class="status">فعال</span><span>امروز</span><button class="btn">ویرایش</button></div>
+    </div>
+    <div class="card form">
+      <h3 style="margin:0">افزودن کاربر</h3>
+      <input placeholder="شماره موبایل">
+      <select><option>Viewer</option><option>Dispatcher</option><option>Manager</option></select>
+      <button class="btn ok">افزودن به سازمان</button>
+    </div>
+  </div>
+</section>
+
+<section id="routes" class="page">
+  <div class="head"><h2 style="margin:0">مسیرها و گزارش‌ها</h2><span class="chip">Route • Stops • Distance</span></div>
+  <div class="card">
+    <p>انتخاب چند خودرو، بازه زمانی، تاریخچه مسیر، توقف‌ها، مسافت و Eventهای امنیتی.</p>
+  </div>
+</section>
+
+<section id="support" class="page">
+  <div class="head"><h2 style="margin:0">پشتیبانی و پیام‌ها</h2><span class="chip">Ticket #1842 • Answered</span></div>
+  <div class="grid">
+    <div class="card">
+      <h3 style="margin-top:0">گفتگو با پشتیبانی</h3>
+      <div class="chat">
+        <div class="msg">سلام، GPS خودرو 04 از صبح Offline شده.<small>شما • 10:14</small></div>
+        <div class="msg admin">سلام. آخرین ارتباط دستگاه را بررسی کردیم. لطفاً وضعیت برق خودرو را چک کنید.<small>پشتیبانی • 10:20</small></div>
+      </div>
+      <div class="form" style="margin-top:12px">
+        <textarea id="reply" placeholder="پیام جدید"></textarea>
+        <button class="btn ok" id="sendReply">ارسال پیام</button>
+      </div>
+    </div>
+    <div class="card form">
+      <h3 style="margin:0">تیکت جدید</h3>
+      <input id="subject" placeholder="موضوع">
+      <select><option>فنی</option><option>پرداخت و اشتراک</option><option>دستگاه</option><option>عمومی</option></select>
+      <textarea id="message" placeholder="متن پیام"></textarea>
+      <button class="btn" id="newTicket">ارسال به مدیریت</button>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="page">
+  <div class="head"><h2 style="margin:0">درباره ما و تماس</h2><span class="chip">Server Driven</span></div>
+  <div class="grid">
+    <div class="card">
+      <h3>MTcar</h3>
+      <p>سامانه مدیریت و رهگیری خودرو و موتورسیکلت برای کاربران شخصی و سازمانی.</p>
+      <p class="sub">این متن از Remote Config خوانده می‌شود و مدیر می‌تواند بدون آپدیت نرم‌افزار آن را تغییر دهد.</p>
+    </div>
+    <div class="card">
+      <div class="row"><span>ایمیل پشتیبانی</span><b>support@mediatelecom.ir</b></div>
+      <div class="row"><span>پشتیبانی داخل برنامه</span><b>فعال</b></div>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+<script>
+const pages=[...document.querySelectorAll('.page')], nav=[...document.querySelectorAll('.nav button')];
+nav.forEach(b=>b.onclick=()=>{nav.forEach(x=>x.classList.remove('on'));b.classList.add('on');pages.forEach(p=>p.classList.toggle('on',p.id===b.dataset.p))});
+document.getElementById('newTicket').onclick=()=>alert('پیام به پنل مدیریت ارسال شد — Demo');
+document.getElementById('sendReply').onclick=()=>alert('پاسخ به تیکت ارسال شد — Demo');
+</script>
+</body>
+</html>
