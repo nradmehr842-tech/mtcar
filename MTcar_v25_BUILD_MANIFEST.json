@@ -1,0 +1,34 @@
+{
+  "project": "MTcar",
+  "version": "v25-no-sms",
+  "app_version": "6.3.0+25",
+  "authentication": {
+    "login": [
+      "username",
+      "password"
+    ],
+    "register": [
+      "username",
+      "password",
+      "confirmPassword"
+    ],
+    "otp_required": false,
+    "phone_required": false,
+    "password_recovery": "support_only_for_now"
+  },
+  "tracker_sms_backup": {
+    "supported": true,
+    "required": false,
+    "permission_request": "only_when_user_enables_sms_backup"
+  },
+  "default_tracker": {
+    "brand": "MTcar",
+    "model": "MT120",
+    "protocol": "gps103",
+    "port": 5001
+  },
+  "workflow": "Build MTcar v25 No-SMS APK",
+  "artifact": "MTcar-v25-No-SMS-APK",
+  "apk": "MTcar-v25-release.apk",
+  "ui_reference": "locked v24 design system, auth fields intentionally changed per user request"
+}

@@ -132,7 +132,7 @@ organizationRouter.post('/organizations/:id/members', async (req, res, next) => 
       return res.status(403).json({ error: 'organization_manager_required' });
     }
 
-    const phone = String(req.body?.phone || '').trim();
+    const username = String(req.body?.username || '').trim().toLowerCase();
     const role = String(req.body?.role || 'viewer');
 
     if (!['manager','dispatcher','viewer'].includes(role)) {
@@ -140,8 +140,8 @@ organizationRouter.post('/organizations/:id/members', async (req, res, next) => 
     }
 
     const userResult = await db.query(
-      `SELECT id FROM users WHERE phone=$1 AND status='active' LIMIT 1`,
-      [phone]
+      `SELECT id FROM users WHERE LOWER(username)=LOWER($1) AND status='active' LIMIT 1`,
+      [username]
     );
 
     const user = userResult.rows[0];

@@ -6,47 +6,21 @@ class AuthApi {
   AuthApi(this.baseUrl);
 
   Future<Map<String, dynamic>> login({
-    required String phone,
+    required String username,
     required String password,
   }) => _post('/api/auth/login', {
-        'phone': phone,
+        'username': username,
         'password': password,
       });
 
   Future<Map<String, dynamic>> register({
-    required String phone,
+    required String username,
     required String password,
+    required String confirmPassword,
   }) => _post('/api/auth/register', {
-        'phone': phone,
+        'username': username,
         'password': password,
-      });
-
-  Future<Map<String, dynamic>> verifyPhone({
-    required String phone,
-    required dynamic challengeId,
-    required String code,
-  }) => _post('/api/auth/verify-phone', {
-        'phone': phone,
-        'challengeId': challengeId,
-        'code': code,
-      });
-
-  Future<Map<String, dynamic>> forgotPasswordRequest({
-    required String phone,
-  }) => _post('/api/auth/forgot-password/request', {
-        'phone': phone,
-      });
-
-  Future<Map<String, dynamic>> forgotPasswordConfirm({
-    required String phone,
-    required dynamic challengeId,
-    required String code,
-    required String newPassword,
-  }) => _post('/api/auth/forgot-password/confirm', {
-        'phone': phone,
-        'challengeId': challengeId,
-        'code': code,
-        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
       });
 
   Future<Map<String, dynamic>> _post(

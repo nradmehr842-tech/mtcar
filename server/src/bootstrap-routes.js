@@ -22,7 +22,7 @@ bootstrapRouter.get('/app/bootstrap', authRequired, activeUserRequired, async (r
   try {
     const [user, sub, devices, organizations, support, config] = await Promise.all([
       db.query(
-        `SELECT id,phone,phone_verified,status,created_at,
+        `SELECT id,username,phone,status,created_at,
                 free_trial_started_at,free_trial_ends_at,free_trial_used
          FROM users WHERE id=$1`,
         [req.auth.sub]

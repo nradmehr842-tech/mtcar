@@ -31,6 +31,7 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
   String vehicleType = 'car';
   bool loadingModels = true;
   bool saving = false;
+  bool enableSmsBackup = false;
   String? error;
 
   late final DeviceModelsApi modelsApi;
@@ -102,14 +103,23 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
         deviceModelId: modelId,
       );
 
-      // Tracker command password remains on the phone and is not saved as
-      // plaintext on the MTcar server.
-      await AlertBridge.configure(
-        trackerPhone: sim,
-        trackerPassword: trackerPassword.text.trim(),
-        enabled: true,
-      );
-      await AlertBridge.requestPermissions();
+      // SMS Backup is optional and is not required for account creation or
+      // normal server-based tracking. Permissions are requested only when the
+      // user explicitly enables this fallback.
+      if (enableSmsBackup) {
+        await AlertBridge.configure(
+          trackerPhone: sim,
+          trackerPassword: trackerPassword.text.trim(),
+          enabled: true,
+        );
+        await AlertBridge.requestPermissions();
+      } else {
+        await AlertBridge.configure(
+          trackerPhone: sim,
+          trackerPassword: trackerPassword.text.trim(),
+          enabled: false,
+        );
+      }
 
       if (!mounted) return;
       widget.onCreated();
@@ -254,6 +264,16 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
                   onChanged: (v) => setState(() => vehicleType = v ?? 'car'),
                 ),
                 const SizedBox(height: 12),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: enableSmsBackup,
+                  onChanged: (v) => setState(() => enableSmsBackup = v),
+                  title: const Text('SMS Backup (اختیاری)'),
+                  subtitle: const Text(
+                    'برای ثبت‌نام یا رهگیری آنلاین لازم نیست؛ فقط برای فرمان/هشدار پشتیبان پیامکی.',
+                  ),
+                ),
+                const SizedBox(height: 4),
                 TextField(
                   controller: trackerPassword,
                   obscureText: true,
@@ -261,8 +281,9 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
                   decoration: const InputDecoration(
                     labelText: 'رمز فرمان ردیاب',
                     prefixIcon: Icon(Icons.password_rounded),
-                    helperText:
-                        'این رمز برای فرمان‌های SMS روی همین گوشی نگهداری می‌شود.',
+                    helperText: enableSmsBackup
+                        ? 'این رمز برای فرمان‌های SMS روی همین گوشی نگهداری می‌شود.'
+                        : 'در حالت عادی لازم نیست؛ برای SMS Backup اختیاری استفاده می‌شود.',
                   ),
                 ),
               ],

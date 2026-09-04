@@ -1796,7 +1796,7 @@ class _AccountTabState extends State<_AccountTab> {
                   children: [
                     const Text('کاربر MTcar', style: TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
                     const SizedBox(height: 5),
-                    Text('${user['phone'] ?? '—'}', style: const TextStyle(fontSize: 15)),
+                    Text('@${user['username'] ?? '—'}', style: const TextStyle(fontSize: 15)),
                     const SizedBox(height: 10),
                     MtStatusPill(text: active ? 'اشتراک فعال' : 'اشتراک منقضی', color: active ? Colors.green : MtColors.red),
                     const SizedBox(height: 8),
@@ -1819,8 +1819,6 @@ class _AccountTabState extends State<_AccountTab> {
           child: Column(
             children: [
               _AccountRow(icon: Icons.person_outline_rounded, title: 'اطلاعات کاربری', onTap: () {}),
-              const MtDivider(),
-              _AccountRow(icon: Icons.phone_iphone_rounded, title: 'تغییر شماره موبایل', onTap: _changePhone),
               const MtDivider(),
               _AccountRow(icon: Icons.lock_outline_rounded, title: 'تغییر رمز عبور', onTap: _changePassword),
               const MtDivider(),
@@ -1914,108 +1912,6 @@ class _AccountTabState extends State<_AccountTab> {
     );
     current.dispose();
     next.dispose();
-  }
-
-  Future<void> _changePhone() async {
-    final phone = TextEditingController();
-    final password = TextEditingController();
-    final code = TextEditingController();
-    dynamic challengeId;
-    bool requested = false;
-    String? error;
-
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setLocal) {
-          Future<void> request() async {
-            try {
-              final result = await api.requestPhoneChange(
-                newPhone: phone.text.trim(),
-                currentPassword: password.text,
-              );
-              final otp = result['otp'];
-              setLocal(() {
-                challengeId = otp is Map ? otp['challengeId'] : result['challengeId'];
-                requested = true;
-                error = challengeId == null
-                    ? 'کد ارسال شد؛ شناسه چالش از سرویس OTP باید برگردد.'
-                    : null;
-              });
-            } catch (_) {
-              setLocal(() => error = 'شماره جدید یا رمز فعلی صحیح نیست، یا این شماره قبلاً ثبت شده است.');
-            }
-          }
-
-          Future<void> confirm() async {
-            if (challengeId == null || code.text.trim().isEmpty) {
-              setLocal(() => error = 'کد تایید را وارد کنید.');
-              return;
-            }
-            try {
-              await api.confirmPhoneChange(
-                newPhone: phone.text.trim(),
-                challengeId: challengeId,
-                code: code.text.trim(),
-              );
-              if (dialogContext.mounted) Navigator.pop(dialogContext);
-              if (mounted) {
-                ScaffoldMessenger.of(this.context).showSnackBar(
-                  const SnackBar(content: Text('شماره موبایل با موفقیت تغییر کرد. برای اعمال کامل، یک‌بار دوباره وارد حساب شوید.')),
-                );
-              }
-            } catch (_) {
-              setLocal(() => error = 'کد تایید اشتباه یا منقضی شده است.');
-            }
-          }
-
-          return AlertDialog(
-            title: const Text('تغییر شماره موبایل'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: phone,
-                  enabled: !requested,
-                  keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(labelText: 'شماره جدید'),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: password,
-                  enabled: !requested,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'رمز فعلی حساب'),
-                ),
-                if (requested) ...[
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: code,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'کد تایید شماره جدید'),
-                  ),
-                ],
-                if (error != null) ...[
-                  const SizedBox(height: 10),
-                  Text(error!, style: const TextStyle(color: MtColors.red, fontSize: 11.5)),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('انصراف')),
-              FilledButton(
-                onPressed: requested ? confirm : request,
-                child: Text(requested ? 'تایید شماره' : 'ارسال کد'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-    phone.dispose();
-    password.dispose();
-    code.dispose();
   }
 
 }

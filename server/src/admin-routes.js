@@ -125,7 +125,8 @@ adminRouter.get('/users', async (req, res, next) => {
     if (q) {
       params.push(`%${q}%`);
       where += ` AND (
-        u.phone ILIKE $${params.length}
+        u.username ILIKE $${params.length}
+        OR COALESCE(u.phone,'') ILIKE $${params.length}
         OR EXISTS (
           SELECT 1 FROM user_devices d
           WHERE d.user_id=u.id AND (
@@ -146,9 +147,9 @@ adminRouter.get('/users', async (req, res, next) => {
       `
       SELECT
         u.id,
-        u.phone AS login_phone,
+        u.username AS login_username,
+        u.phone AS profile_phone,
         u.status,
-        u.phone_verified,
         u.created_at,
         sub.ends_at AS subscription_ends_at,
         CASE
@@ -187,7 +188,7 @@ adminRouter.get('/users', async (req, res, next) => {
       LEFT JOIN user_devices d ON d.user_id=u.id
       WHERE ${where}
       GROUP BY
-        u.id,u.phone,u.status,u.phone_verified,u.created_at,
+        u.id,u.username,u.phone,u.status,u.created_at,
         sub.ends_at,pay.amount_toman,pay.paid_at
       ORDER BY u.created_at DESC
       LIMIT $${limitIndex} OFFSET $${offsetIndex}
@@ -207,7 +208,7 @@ adminRouter.get('/users/:id', async (req, res, next) => {
 
     const [user, devices, subs, payments] = await Promise.all([
       db.query(
-        `SELECT id,phone,status,phone_verified,created_at,updated_at
+        `SELECT id,username,phone,status,created_at,updated_at
          FROM users WHERE id=$1 AND role='user'`,
         [userId]
       ),
@@ -345,7 +346,7 @@ adminRouter.get('/payments', async (req, res, next) => {
       `SELECT
          p.id,p.amount_toman,p.provider,p.status,
          p.provider_reference,p.created_at,p.paid_at,
-         u.id AS user_id,u.phone AS login_phone
+         u.id AS user_id,u.username AS login_username
        FROM membership_payments p
        JOIN users u ON u.id=p.user_id
        ORDER BY p.created_at DESC
@@ -363,7 +364,7 @@ adminRouter.get('/devices', async (req, res, next) => {
       `SELECT
          d.id,d.imei,d.tracker_sim_phone,d.vehicle_name,
          d.vehicle_type,d.vehicle_icon,d.is_active,d.traccar_device_id,
-         u.id AS user_id,u.phone AS login_phone
+         u.id AS user_id,u.username AS login_username
        FROM user_devices d
        JOIN users u ON u.id=d.user_id
        ORDER BY d.created_at DESC

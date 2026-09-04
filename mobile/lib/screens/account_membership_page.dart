@@ -11,31 +11,19 @@ class AccountMembershipPage extends StatelessWidget {
         const Card(
           child: ListTile(
             leading: CircleAvatar(child: Icon(Icons.person_outline)),
-            title: Text('شماره ورود'),
-            subtitle: Text('09•• ••• ••42'),
+            title: Text('نام کاربری'),
+            subtitle: Text('شناسه ورود MTcar'),
             trailing: Icon(Icons.verified_outlined),
           ),
         ),
         const SizedBox(height: 8),
         Card(
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.phone_android),
-                title: const Text('تغییر شماره موبایل'),
-                subtitle: const Text('رمز فعلی + کد پیامکی شماره جدید'),
-                trailing: const Icon(Icons.chevron_left),
-                onTap: () {},
-              ),
-              const Divider(height: 1),
-              ListTile(
-                leading: const Icon(Icons.password),
-                title: const Text('تغییر رمز ورود برنامه'),
-                subtitle: const Text('مستقل از رمز خود ردیاب خودرو'),
-                trailing: const Icon(Icons.chevron_left),
-                onTap: () {},
-              ),
-            ],
+          child: ListTile(
+            leading: const Icon(Icons.password),
+            title: const Text('تغییر رمز ورود برنامه'),
+            subtitle: const Text('با واردکردن رمز فعلی؛ بدون پیامک'),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () {},
           ),
         ),
         const SizedBox(height: 16),
@@ -61,7 +49,7 @@ class AccountMembershipPage extends StatelessWidget {
                   style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 14),
-                FilledButton.icon(
+                const FilledButton.icon(
                   onPressed: null,
                   icon: Icon(Icons.credit_card),
                   label: Text('تمدید / پرداخت اشتراک'),

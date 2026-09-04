@@ -7,7 +7,6 @@ import 'app/mtcar_theme.dart';
 import 'screens/auth_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/welcome_screen.dart';
-import 'services/alert_bridge.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,11 +77,9 @@ class _MtCarAppState extends State<MtCarApp> {
   }
 
   Future<void> _startOnboarding() async {
-    try {
-      await AlertBridge.requestPermissions();
-    } catch (_) {
-      // iOS/PWA or unsupported Android permission flows continue safely.
-    }
+    // Account creation no longer depends on SMS/phone permissions.
+    // Optional tracker SMS Backup permissions are requested only if the user
+    // explicitly enables that feature while adding a device.
     await widget.prefs.setBool('mtcar_onboarding_done', true);
     if (!mounted) return;
     setState(() {

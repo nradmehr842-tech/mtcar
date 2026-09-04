@@ -1,4 +1,4 @@
-# ساخت APK اصلی MTcar v24
+# ساخت APK اصلی MTcar v25
 
 این بسته نسخه اصلی فعلی MTcar است. UI از تصاویر قفل‌شده در `ui_reference_locked/` گرفته شده و منطق فنی آخرین نسخه حفظ شده است.
 
@@ -6,15 +6,15 @@
 
 1. محتوای ZIP را در ریشه Repository قرار بده.
 2. در GitHub وارد `Actions` شو.
-3. Workflow با نام `Build MTcar v24 Main APK` را باز کن.
+3. Workflow با نام `Build MTcar v25 Main APK` را باز کن.
 4. `Run workflow` را بزن.
 5. پس از موفقیت Build، Artifact زیر را دانلود کن:
 
-`MTcar-v24-Main-APK`
+`MTcar-v25-No-SMS-APK`
 
 فایل APK داخل Artifact:
 
-`MTcar-v24-release.apk`
+`MTcar-v25-release.apk`
 
 ## Backend تولید
 
@@ -36,3 +36,11 @@ APK با این آدرس Build می‌شود:
 ## Signing
 
 Workflow فعلی یک Release APK قابل نصب برای تست/استقرار مستقیم می‌سازد. برای انتشار رسمی Store باید Keystore دائمی MTcar ساخته شود و در GitHub Secrets نگهداری شود.
+
+
+## احراز هویت v25
+
+- ثبت‌نام: نام کاربری + رمز عبور + تکرار رمز عبور
+- ورود: نام کاربری + رمز عبور
+- پیامک/OTP برای حساب کاربری لازم نیست.
+- SMS Backup ردیاب اختیاری و مستقل است.

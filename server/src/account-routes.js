@@ -2,12 +2,11 @@ import express from 'express';
 import { db } from './db.js';
 import {
   authRequired,
-  normalizePhone,
+  normalizeUsername,
+  validUsername,
   signToken,
   hashPassword,
   verifyPassword,
-  issueOtp,
-  consumeOtp,
 } from './auth.js';
 import {
   annualPriceToman,
@@ -19,64 +18,35 @@ export const accountRouter = express.Router();
 
 accountRouter.post('/auth/register', async (req, res, next) => {
   try {
-    const phone = normalizePhone(req.body?.phone);
-    const passwordHash = await hashPassword(req.body?.password || '');
+    const username = normalizeUsername(req.body?.username);
+    const password = String(req.body?.password || '');
+    const confirmPassword = String(req.body?.confirmPassword || '');
 
-    if (!phone) {
-      return res.status(400).json({ error: 'phone_required' });
+    if (!validUsername(username)) {
+      return res.status(400).json({ error: 'invalid_username' });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: 'password_confirmation_mismatch' });
     }
 
-    const existing = await db.query(`SELECT id FROM users WHERE phone=$1`, [phone]);
+    const passwordHash = await hashPassword(password);
+
+    const existing = await db.query(
+      `SELECT id FROM users WHERE LOWER(username)=LOWER($1) LIMIT 1`,
+      [username]
+    );
     if (existing.rowCount) {
-      return res.status(409).json({ error: 'phone_exists' });
+      return res.status(409).json({ error: 'username_exists' });
     }
 
     const { rows } = await db.query(
-      `INSERT INTO users(phone,password_hash)
-       VALUES($1,$2)
-       RETURNING id,phone,phone_verified,created_at`,
-      [phone, passwordHash]
+      `INSERT INTO users(username,password_hash,phone,phone_verified)
+       VALUES($1,$2,NULL,FALSE)
+       RETURNING id,username,role,status,created_at`,
+      [username, passwordHash]
     );
 
-    const otp = await issueOtp({
-      userId: rows[0].id,
-      purpose: 'register',
-      phone,
-    });
-
-    res.status(201).json({ user: rows[0], otp });
-  } catch (e) {
-    next(e);
-  }
-});
-
-accountRouter.post('/auth/verify-phone', async (req, res, next) => {
-  try {
-    const phone = normalizePhone(req.body?.phone);
-    const ok = await consumeOtp({
-      challengeId: req.body?.challengeId,
-      purpose: 'register',
-      phone,
-      code: req.body?.code,
-    });
-
-    if (!ok) {
-      return res.status(400).json({ error: 'invalid_or_expired_otp' });
-    }
-
-    const { rows } = await db.query(
-      `UPDATE users
-       SET phone_verified=TRUE,updated_at=NOW()
-       WHERE phone=$1
-       RETURNING id,phone,phone_verified`,
-      [phone]
-    );
-
-    if (!rows[0]) {
-      return res.status(404).json({ error: 'user_not_found' });
-    }
-
-    res.json({
+    res.status(201).json({
       token: signToken(rows[0]),
       user: rows[0],
     });
@@ -85,84 +55,17 @@ accountRouter.post('/auth/verify-phone', async (req, res, next) => {
   }
 });
 
-
-accountRouter.post('/auth/forgot-password/request', async (req, res, next) => {
-  try {
-    const phone = normalizePhone(req.body?.phone);
-    if (!phone) return res.status(400).json({ error: 'phone_required' });
-
-    const { rows } = await db.query(
-      `SELECT id,status FROM users WHERE phone=$1 LIMIT 1`,
-      [phone]
-    );
-
-    // Avoid leaking whether an account exists.
-    if (!rows[0] || rows[0].status !== 'active') {
-      return res.json({ accepted: true });
-    }
-
-    const otp = await issueOtp({
-      userId: rows[0].id,
-      purpose: 'forgot_password',
-      phone,
-    });
-
-    res.json({ accepted: true, otp });
-  } catch (e) {
-    next(e);
-  }
-});
-
-accountRouter.post('/auth/forgot-password/confirm', async (req, res, next) => {
-  try {
-    const phone = normalizePhone(req.body?.phone);
-    const newPasswordHash = await hashPassword(req.body?.newPassword || '');
-
-    const ok = await consumeOtp({
-      challengeId: req.body?.challengeId,
-      purpose: 'forgot_password',
-      phone,
-      code: req.body?.code,
-    });
-
-    if (!ok) {
-      return res.status(400).json({ error: 'invalid_or_expired_otp' });
-    }
-
-    const { rows } = await db.query(
-      `UPDATE users
-       SET password_hash=$2,updated_at=NOW()
-       WHERE phone=$1 AND status='active'
-       RETURNING id,phone`,
-      [phone, newPasswordHash]
-    );
-
-    if (!rows[0]) {
-      return res.status(404).json({ error: 'user_not_found' });
-    }
-
-    res.json({ ok: true });
-  } catch (e) {
-    next(e);
-  }
-});
-
 accountRouter.post('/auth/login', async (req, res, next) => {
   try {
-    const phone = normalizePhone(req.body?.phone);
+    const username = normalizeUsername(req.body?.username);
     const { rows } = await db.query(
-      `SELECT * FROM users WHERE phone=$1 LIMIT 1`,
-      [phone]
+      `SELECT * FROM users WHERE LOWER(username)=LOWER($1) LIMIT 1`,
+      [username]
     );
 
     const user = rows[0];
-
     if (!user || !(await verifyPassword(req.body?.password || '', user.password_hash))) {
       return res.status(401).json({ error: 'invalid_credentials' });
-    }
-
-    if (!user.phone_verified) {
-      return res.status(403).json({ error: 'phone_not_verified' });
     }
     if (user.status !== 'active') {
       return res.status(403).json({ error: 'account_suspended' });
@@ -172,8 +75,7 @@ accountRouter.post('/auth/login', async (req, res, next) => {
       token: signToken(user),
       user: {
         id: user.id,
-        phone: user.phone,
-        phoneVerified: user.phone_verified,
+        username: user.username,
         role: user.role,
         status: user.status,
       },
@@ -183,10 +85,19 @@ accountRouter.post('/auth/login', async (req, res, next) => {
   }
 });
 
+// No SMS/e-mail recovery is enabled in v25. Password changes require an
+// authenticated session and the current password.
+accountRouter.post('/auth/forgot-password/request', (_req, res) => {
+  res.status(501).json({
+    error: 'password_recovery_disabled',
+    message: 'Contact MTcar support for account recovery.',
+  });
+});
+
 accountRouter.get('/account', authRequired, async (req, res, next) => {
   try {
     const { rows } = await db.query(
-      `SELECT id,phone,phone_verified,created_at
+      `SELECT id,username,phone,created_at
        FROM users WHERE id=$1`,
       [req.auth.sub]
     );
@@ -236,76 +147,6 @@ accountRouter.post('/account/change-password', authRequired, async (req, res, ne
     );
 
     res.json({ ok: true });
-  } catch (e) {
-    next(e);
-  }
-});
-
-accountRouter.post('/account/change-phone/request', authRequired, async (req, res, next) => {
-  try {
-    const newPhone = normalizePhone(req.body?.newPhone);
-    const currentPassword = req.body?.currentPassword || '';
-
-    const current = await db.query(
-      `SELECT password_hash FROM users WHERE id=$1`,
-      [req.auth.sub]
-    );
-
-    if (!current.rows[0] || !(await verifyPassword(
-      currentPassword,
-      current.rows[0].password_hash
-    ))) {
-      return res.status(400).json({ error: 'current_password_incorrect' });
-    }
-
-    if (!newPhone) {
-      return res.status(400).json({ error: 'new_phone_required' });
-    }
-
-    const exists = await db.query(`SELECT id FROM users WHERE phone=$1`, [newPhone]);
-    if (exists.rowCount) {
-      return res.status(409).json({ error: 'phone_exists' });
-    }
-
-    const otp = await issueOtp({
-      userId: Number(req.auth.sub),
-      purpose: 'change_phone',
-      phone: newPhone,
-    });
-
-    res.json({ newPhone, otp });
-  } catch (e) {
-    next(e);
-  }
-});
-
-accountRouter.post('/account/change-phone/confirm', authRequired, async (req, res, next) => {
-  try {
-    const newPhone = normalizePhone(req.body?.newPhone);
-
-    const ok = await consumeOtp({
-      challengeId: req.body?.challengeId,
-      purpose: 'change_phone',
-      phone: newPhone,
-      code: req.body?.code,
-    });
-
-    if (!ok) {
-      return res.status(400).json({ error: 'invalid_or_expired_otp' });
-    }
-
-    const { rows } = await db.query(
-      `UPDATE users
-       SET phone=$1,phone_verified=TRUE,updated_at=NOW()
-       WHERE id=$2
-       RETURNING id,phone,phone_verified`,
-      [newPhone, req.auth.sub]
-    );
-
-    res.json({
-      token: signToken(rows[0]),
-      user: rows[0],
-    });
   } catch (e) {
     next(e);
   }
@@ -372,14 +213,14 @@ accountRouter.post('/subscription/checkout', authRequired, async (req, res, next
     const amount = await annualPriceToman();
 
     const userResult = await db.query(
-      `SELECT phone FROM users WHERE id=$1`,
+      `SELECT username,phone FROM users WHERE id=$1`,
       [req.auth.sub]
     );
 
-    const phone = userResult.rows[0]?.phone;
-    if (!phone) {
+    if (!userResult.rows[0]) {
       return res.status(404).json({ error: 'user_not_found' });
     }
+    const phone = userResult.rows[0].phone || null;
 
     const provider = (process.env.PAYMENT_PROVIDER || 'disabled').toLowerCase();
 

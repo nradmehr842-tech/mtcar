@@ -8,9 +8,9 @@ class AccountApi {
   AccountApi(this.baseUrl, {this.token});
 
   Map<String, String> get headers => {
-    'Content-Type': 'application/json',
-    if (token != null) 'Authorization': 'Bearer $token',
-  };
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      };
 
   Future<Map<String, dynamic>> account() => _get('/api/account');
   Future<Map<String, dynamic>> subscriptionStatus() => _get('/api/subscription/status');
@@ -25,24 +25,6 @@ class AccountApi {
       'newPassword': newPassword,
     });
   }
-
-  Future<Map<String, dynamic>> requestPhoneChange({
-    required String newPhone,
-    required String currentPassword,
-  }) => _post('/api/account/change-phone/request', {
-    'newPhone': newPhone,
-    'currentPassword': currentPassword,
-  });
-
-  Future<Map<String, dynamic>> confirmPhoneChange({
-    required String newPhone,
-    required dynamic challengeId,
-    required String code,
-  }) => _post('/api/account/change-phone/confirm', {
-    'newPhone': newPhone,
-    'challengeId': challengeId,
-    'code': code,
-  });
 
   Future<Map<String, dynamic>> checkoutAnnual() =>
       _post('/api/subscription/checkout', const {});

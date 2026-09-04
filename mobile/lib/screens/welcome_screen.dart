@@ -107,8 +107,9 @@ class WelcomeScreen extends StatelessWidget {
                       MtDivider(),
                       _PermissionRow(
                         icon: Icons.sms_outlined,
-                        title: 'پیامک',
-                        subtitle: 'برای SMS Backup و فرمان‌های سازگار دستگاه',
+                        title: 'پیامک (اختیاری)',
+                        subtitle: 'فقط در صورت فعال‌کردن SMS Backup ردیاب',
+                        initialEnabled: false,
                       ),
                       MtDivider(),
                       _PermissionRow(
@@ -220,11 +221,13 @@ class _PermissionRow extends StatefulWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final bool initialEnabled;
 
   const _PermissionRow({
     required this.icon,
     required this.title,
     required this.subtitle,
+    this.initialEnabled = true,
   });
 
   @override
@@ -232,7 +235,13 @@ class _PermissionRow extends StatefulWidget {
 }
 
 class _PermissionRowState extends State<_PermissionRow> {
-  bool enabled = true;
+  late bool enabled;
+
+  @override
+  void initState() {
+    super.initState();
+    enabled = widget.initialEnabled;
+  }
 
   @override
   Widget build(BuildContext context) {

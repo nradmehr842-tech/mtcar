@@ -9,7 +9,8 @@ export async function initDb() {
   await db.query(`
     CREATE TABLE IF NOT EXISTS users (
       id BIGSERIAL PRIMARY KEY,
-      phone VARCHAR(32) UNIQUE NOT NULL,
+      username VARCHAR(64) UNIQUE NOT NULL,
+      phone VARCHAR(32) UNIQUE,
       password_hash TEXT NOT NULL,
       phone_verified BOOLEAN NOT NULL DEFAULT FALSE,
       role VARCHAR(24) NOT NULL DEFAULT 'user',
@@ -18,8 +19,23 @@ export async function initDb() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(64);
     ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(24) NOT NULL DEFAULT 'user';
     ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(24) NOT NULL DEFAULT 'active';
+    ALTER TABLE users ALTER COLUMN phone DROP NOT NULL;
+
+    UPDATE users
+    SET username = CASE
+      WHEN username IS NOT NULL AND BTRIM(username) <> '' THEN LOWER(BTRIM(username))
+      WHEN phone IS NOT NULL AND BTRIM(phone) <> '' THEN 'u_' || REGEXP_REPLACE(phone, '[^0-9A-Za-z]+', '', 'g')
+      ELSE 'user_' || id::text
+    END
+    WHERE username IS NULL OR BTRIM(username) = '';
+
+    CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_uq
+      ON users ((LOWER(username)));
+
+    ALTER TABLE users ALTER COLUMN username SET NOT NULL;
 
     CREATE TABLE IF NOT EXISTS organizations (
       id BIGSERIAL PRIMARY KEY,
