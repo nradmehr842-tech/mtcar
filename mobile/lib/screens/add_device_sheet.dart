@@ -278,9 +278,9 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
                   controller: trackerPassword,
                   obscureText: true,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'رمز فرمان ردیاب',
-                    prefixIcon: Icon(Icons.password_rounded),
+                    prefixIcon: const Icon(Icons.password_rounded),
                     helperText: enableSmsBackup
                         ? 'این رمز برای فرمان‌های SMS روی همین گوشی نگهداری می‌شود.'
                         : 'در حالت عادی لازم نیست؛ برای SMS Backup اختیاری استفاده می‌شود.',
