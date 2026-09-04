@@ -49,7 +49,7 @@ class AccountMembershipPage extends StatelessWidget {
                   style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 14),
-                const FilledButton.icon(
+                FilledButton.icon(
                   onPressed: null,
                   icon: Icon(Icons.credit_card),
                   label: Text('تمدید / پرداخت اشتراک'),

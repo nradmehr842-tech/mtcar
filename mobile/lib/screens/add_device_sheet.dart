@@ -191,7 +191,7 @@ class _AddDeviceSheetState extends State<AddDeviceSheet> {
                   DropdownButtonFormField<int>(
                     value: modelId,
                     isExpanded: true,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'مدل ردیاب',
                       prefixIcon: Icon(Icons.gps_fixed_rounded),
                     ),

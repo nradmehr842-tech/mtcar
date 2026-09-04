@@ -1,4 +1,4 @@
-name: Build MTcar v25.2 APK + Diagnostics
+name: Build MTcar v25.3 No-SMS APK
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 jobs:
   android-release:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 35
 
     steps:
       - name: Checkout
@@ -52,80 +52,25 @@ jobs:
         working-directory: mobile
         run: flutter pub get
 
-      # Analyzer diagnostics are recorded, but do not stop the APK build.
-      - name: Analyze app (non-blocking)
-        id: analyze
+      - name: Analyze production app
         working-directory: mobile
-        shell: bash
-        run: |
-          set +e
-          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee ../flutter-analyze.log
-          code=${PIPESTATUS[0]}
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          echo "Flutter analyze exit code: $code"
-          exit 0
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
-      # Capture the full compiler output so any real Dart/Android error is visible.
       - name: Build release APK
-        id: build
         working-directory: mobile
+        run: >
+          flutter build apk --release
+          --dart-define=API_BASE_URL=https://api.mediatelecom.ir
+
+      - name: Prepare artifact
         shell: bash
         run: |
-          set +e
-          flutter build apk --release \
-            --dart-define=API_BASE_URL=https://api.mediatelecom.ir \
-            2>&1 | tee ../flutter-build.log
-          code=${PIPESTATUS[0]}
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          echo "Flutter build exit code: $code"
-          exit 0
-
-      - name: Create concise error summary
-        if: always()
-        shell: bash
-        run: |
-          {
-            echo "=== MTcar v25.2 diagnostics ==="
-            echo "analyze_exit=${{ steps.analyze.outputs.exit_code }}"
-            echo "build_exit=${{ steps.build.outputs.exit_code }}"
-            echo
-            echo "=== Analyzer errors ==="
-            grep -Ei "(^|[[:space:]])error([[:space:]•:-]|$)|Error:" flutter-analyze.log | head -n 200 || true
-            echo
-            echo "=== Build errors ==="
-            grep -Ei "(^|[[:space:]])error([[:space:]•:-]|$)|Error:|FAILURE:|What went wrong" flutter-build.log | head -n 250 || true
-          } > mtcar-errors-summary.txt
-
-      - name: Upload diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: MTcar-v25.2-Diagnostics
-          path: |
-            flutter-analyze.log
-            flutter-build.log
-            mtcar-errors-summary.txt
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Prepare APK artifact
-        if: steps.build.outputs.exit_code == '0'
-        shell: bash
-        run: |
-          cp mobile/build/app/outputs/flutter-apk/app-release.apk MTcar-v25.2-release.apk
+          cp mobile/build/app/outputs/flutter-apk/app-release.apk MTcar-v25.3-release.apk
 
       - name: Upload MTcar APK
-        if: steps.build.outputs.exit_code == '0'
         uses: actions/upload-artifact@v4
         with:
-          name: MTcar-v25.2-APK
-          path: MTcar-v25.2-release.apk
+          name: MTcar-v25.3-No-SMS-APK
+          path: MTcar-v25.3-release.apk
           if-no-files-found: error
           retention-days: 30
-
-      - name: Fail job if APK build failed
-        if: steps.build.outputs.exit_code != '0'
-        shell: bash
-        run: |
-          echo "APK build failed. Download artifact: MTcar-v25.2-Diagnostics"
-          exit 1
