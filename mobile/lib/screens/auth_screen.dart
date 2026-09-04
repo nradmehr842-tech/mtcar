@@ -93,6 +93,14 @@ class _AuthScreenState extends State<AuthScreen> {
       message = null;
     });
 
+    // Local UI-only offline access. This token is never accepted by the backend
+    // and cannot access cloud data or send server-side commands. It exists only
+    // so the production UI can be opened before the VPS/API is available.
+    if (!registerMode && u == 'mtcar' && pass == 'mtcar1405') {
+      widget.onAuthenticated('mtcar_local_offline_session', rememberMe);
+      return;
+    }
+
     try {
       final result = registerMode
           ? await api.register(

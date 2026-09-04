@@ -79,12 +79,38 @@ class _MainShellState extends State<MainShell> {
     return value?.isNotEmpty == true ? value! : 'خودروی من';
   }
 
+  bool get offlineMode => widget.token == 'mtcar_local_offline_session';
+
   Future<void> _load() async {
     if (mounted) {
       setState(() {
         loading = true;
         loadError = null;
       });
+    }
+
+    if (offlineMode) {
+      if (!mounted) return;
+      setState(() {
+        bootstrap = AppBootstrap(
+          serverTime: DateTime.now(),
+          user: const <String, dynamic>{'username': 'mtcar', 'offline': true},
+          subscription: const <String, dynamic>{
+            'active': false,
+            'expired': false,
+            'offline': true,
+            'daysRemaining': 0,
+          },
+          devices: const <dynamic>[],
+          config: const <String, dynamic>{},
+        );
+        position = null;
+        deviceProfile = null;
+        events = const <dynamic>[];
+        loadError = 'حالت آفلاین فعال است؛ اطلاعات زنده پس از اتصال به سرور نمایش داده می‌شود.';
+        loading = false;
+      });
+      return;
     }
 
     try {
@@ -1761,6 +1787,7 @@ class _AccountTabState extends State<_AccountTab> {
     final sub = widget.bootstrap?.subscription ?? const <String, dynamic>{};
     final days = sub['daysRemaining'] ?? 0;
     final active = sub['active'] == true;
+    final offline = sub['offline'] == true;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
@@ -1798,15 +1825,27 @@ class _AccountTabState extends State<_AccountTab> {
                     const SizedBox(height: 5),
                     Text('@${user['username'] ?? '—'}', style: const TextStyle(fontSize: 15)),
                     const SizedBox(height: 10),
-                    MtStatusPill(text: active ? 'اشتراک فعال' : 'اشتراک منقضی', color: active ? Colors.green : MtColors.red),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_month_outlined, size: 18, color: Colors.grey),
-                        const SizedBox(width: 6),
-                        Text('$days روز تا پایان اشتراک', style: const TextStyle(color: Colors.grey)),
-                      ],
+                    MtStatusPill(
+                      text: offline ? 'حالت آفلاین' : active ? 'اشتراک فعال' : 'اشتراک منقضی',
+                      color: offline ? Colors.grey : active ? Colors.green : MtColors.red,
                     ),
+                    const SizedBox(height: 8),
+                    if (offline)
+                      const Row(
+                        children: [
+                          Icon(Icons.cloud_off_rounded, size: 18, color: Colors.grey),
+                          SizedBox(width: 6),
+                          Text('اتصال به سرور برقرار نیست', style: TextStyle(color: Colors.grey)),
+                        ],
+                      )
+                    else
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_month_outlined, size: 18, color: Colors.grey),
+                          const SizedBox(width: 6),
+                          Text('$days روز تا پایان اشتراک', style: const TextStyle(color: Colors.grey)),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -1971,22 +2010,33 @@ class _SubscriptionStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = subscription['active'] == true;
+    final offline = subscription['offline'] == true;
     final days = subscription['daysRemaining'];
+    final accent = offline ? Colors.grey : (active ? Colors.green : MtColors.red);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: (active ? Colors.green : MtColors.red).withOpacity(.06),
+        color: accent.withOpacity(.06),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          Icon(active ? Icons.verified_outlined : Icons.workspace_premium_outlined, color: active ? Colors.green : MtColors.red),
+          Icon(
+            offline
+                ? Icons.cloud_off_rounded
+                : active
+                    ? Icons.verified_outlined
+                    : Icons.workspace_premium_outlined,
+            color: accent,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              active
-                  ? 'اعتبار حساب: ${days ?? '—'} روز باقی‌مانده'
-                  : 'دوره اعتبار به پایان رسیده است. برای ادامه سرویس‌های ابری اشتراک را تمدید کنید.',
+              offline
+                  ? 'حالت آفلاین: وضعیت اشتراک و سرویس‌های ابری پس از اتصال به سرور بررسی می‌شوند.'
+                  : active
+                      ? 'اعتبار حساب: ${days ?? '—'} روز باقی‌مانده'
+                      : 'دوره اعتبار به پایان رسیده است. برای ادامه سرویس‌های ابری اشتراک را تمدید کنید.',
               style: const TextStyle(fontSize: 11.5),
             ),
           ),
