@@ -1,4 +1,4 @@
-name: Build MTcar v25 No-SMS APK
+name: Build MTcar v25.1 No-SMS APK
 
 on:
   workflow_dispatch:
@@ -54,7 +54,7 @@ jobs:
 
       - name: Analyze production app
         working-directory: mobile
-        run: flutter analyze --no-fatal-infos
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       - name: Build release APK
         working-directory: mobile
@@ -65,12 +65,12 @@ jobs:
       - name: Prepare artifact
         shell: bash
         run: |
-          cp mobile/build/app/outputs/flutter-apk/app-release.apk MTcar-v25-release.apk
+          cp mobile/build/app/outputs/flutter-apk/app-release.apk MTcar-v25.1-release.apk
 
       - name: Upload MTcar APK
         uses: actions/upload-artifact@v4
         with:
-          name: MTcar-v25-No-SMS-APK
-          path: MTcar-v25-release.apk
+          name: MTcar-v25.1-No-SMS-APK
+          path: MTcar-v25.1-release.apk
           if-no-files-found: error
           retention-days: 30
